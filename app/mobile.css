@@ -612,67 +612,6 @@
   .mv-total .m-big[data-rules="true"] {
     color: var(--color-action-text);
   }
-  .mv-matrix {
-    display: inline-flex;
-    flex-direction: column;
-    align-self: flex-start;
-    border: 1px solid var(--color-border-subtle);
-  }
-  .mv-matrix[data-platforms="true"] {
-    box-shadow: 6px 6px 0 -1px var(--color-surface-default), 6px 6px 0 0 var(--color-border-strong),
-      12px 12px 0 -1px var(--color-surface-default), 12px 12px 0 0 var(--color-border-strong);
-  }
-  .mv-band {
-    padding: 4px;
-  }
-  .mv-row {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    height: 16px;
-  }
-  .mv-cell {
-    width: 12px;
-    height: 10px;
-    background: var(--color-action-primary);
-    border-radius: min(var(--radius-control), 3px);
-  }
-  .mv-row[data-size="sm"] .mv-cell {
-    height: 7px;
-  }
-  .mv-row[data-size="lg"] .mv-cell {
-    height: 13px;
-  }
-  .mv-row[data-density="compact"] .mv-cell {
-    width: 10px;
-  }
-  .mv-cell:nth-child(5n + 1) {
-    margin-left: 3px;
-  }
-  .mv-cell[data-intent="secondary"] {
-    background: transparent;
-    box-shadow: inset 0 0 0 1px var(--color-border-strong);
-  }
-  .mv-cell[data-intent="ghost"] {
-    background: var(--color-action-subtle);
-  }
-  .mv-cell[data-intent="danger"] {
-    background: var(--color-feedback-error);
-  }
-  .mv-cell[data-state="hover"] {
-    filter: brightness(0.85);
-  }
-  .mv-cell[data-state="focus"] {
-    outline: 1px solid var(--color-focus-ring);
-    outline-offset: 1px;
-  }
-  .mv-cell[data-state="disabled"] {
-    background: var(--color-surface-sunken);
-    box-shadow: none;
-  }
-  .mv-cell[data-state="loading"] {
-    opacity: 0.5;
-  }
   .mv-rules {
     list-style: none;
     margin: 0;
@@ -1084,5 +1023,84 @@
 @media (min-width: 40rem) and (max-width: 63.99rem) {
   .m {
     max-width: 680px;
+  }
+}
+
+/* 08 — variants on phones: real tap size, one intent group, sideways scroll */
+@media (max-width: 63.99rem) {
+  .mv-tabs .ctl {
+    min-height: 36px;
+    padding: 0 8px;
+    font-size: 12px;
+  }
+  .mv-scroll {
+    margin-right: -20px; /* bleed to the screen edge so the fade reads as "more" */
+    padding: 4px 28px 24px 4px;
+  }
+  .mv-matrix {
+    flex-direction: row;
+    gap: 0;
+  }
+  .mv-matrix .vx-band + .vx-band {
+    border-left: 1px solid var(--color-border-subtle);
+  }
+  .mv .vx-band {
+    padding: 12px;
+    gap: 14px;
+  }
+  .mv .vx-density {
+    --size-target-min: 32px; /* real tap size: nothing below 32px tall */
+    --button-height: 36px;
+  }
+  .mv .vx-density[data-density="compact"] {
+    --button-height: 32px;
+  }
+  .vx-dgroup {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .vx-dgroup__label {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 63.99rem) {
+  .mv {
+    gap: 12px;
+  }
+  .mv .m-focus {
+    gap: 6px;
+  }
+  .mv .m-top {
+    gap: 2px;
+  }
+  .mv-tabs {
+    flex-wrap: nowrap;
+  }
+  .mv-shown {
+    margin-left: auto;
+    font-size: 11px;
+  }
+  .mv .vx-hint {
+    align-self: flex-end;
+  }
+  .mv-scroll {
+    padding-bottom: 6px;
+  }
+  .mv-scroll .vx-matrix[data-platforms="true"] {
+    margin-bottom: 12px; /* the platform layers need their 12px inside the clip */
+  }
+}
+
+/* short phones: density blocks sit side by side too, so the grid grows sideways (it scrolls) instead of being clipped */
+@media (max-width: 63.99rem) and (max-height: 760px) {
+  .mv .vx-band {
+    flex-direction: row;
+    gap: 16px;
+  }
+  .mv .vx-dgroup + .vx-dgroup {
+    padding-left: 16px;
+    border-left: 1px dashed var(--color-border-subtle);
   }
 }

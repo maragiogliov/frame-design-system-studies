@@ -1,15 +1,17 @@
 "use client";
 
-import { Scene, useDesktop , Views } from "@/hooks/scene";
+import { Scene, Views } from "@/hooks/scene";
+import { useScrollFade } from "@/hooks/scrollFade";
 import { VariantsM } from "./mobile/VariantsM";
 import { SystemScope } from "@/system/SystemProvider";
 import { Button, type BtnState, type Intent } from "@/ui/kit";
+import type { HTMLAttributes } from "react";
 
-const SIZES = ["sm", "md", "lg"] as const;
-const INTENTS: Intent[] = ["primary", "secondary", "ghost", "danger"];
-const STATES: BtnState[] = ["default", "hover", "focus", "disabled", "loading"];
-const THEMES = ["light", "dark"] as const;
-const DENSITIES = ["comfortable", "compact"] as const;
+export const SIZES = ["sm", "md", "lg"] as const;
+export const INTENTS: Intent[] = ["primary", "secondary", "ghost", "danger"];
+export const STATES: BtnState[] = ["default", "hover", "focus", "disabled", "loading"];
+export const THEMES = ["light", "dark"] as const;
+export const DENSITIES = ["comfortable", "compact"] as const;
 
 export const DIMS = [
   { name: "size", n: 3, values: "sm · md · lg" },
@@ -41,7 +43,7 @@ export function Variants() {
 }
 
 function VariantsStage({ step }: { step: number }) {
-  const desktop = useDesktop();
+  const scroller = useScrollFade<HTMLDivElement>();
   const dims = Math.min(step, 6); // how many dimensions are applied
   const total = DIMS.slice(0, dims).reduce((a, d) => a * d.n, 1);
   const rules = step >= 7;
@@ -98,27 +100,21 @@ function VariantsStage({ step }: { step: number }) {
       </div>
 
       <div className="vx-stage">
-        <div className="vx-matrix" data-platforms={step >= 6} data-dim={rules}>
-          {themes.map((t) => (
-            <SystemScope key={t} config={{ mode: t }} className="vx-band scope-surface">
-              {densities.map((d) =>
-                sizes.map((sz) => (
-                  <div key={`${d}-${sz}`} className="vx-row" data-density={d}>
-                    {intents.map((it) =>
-                      states.map((st) => (
-                        <span key={`${it}-${st}`} className="vx-cell">
-                          <Button inert size={sz} intent={it} state={st}>
-                            {desktop ? "Save" : undefined}
-                          </Button>
-                        </span>
-                      )),
-                    )}
-                  </div>
-                )),
-              )}
-            </SystemScope>
-          ))}
+        <div ref={scroller} className="vx-scroll" tabIndex={0} aria-label="Button combinations">
+          <VariantMatrix
+            className="vx-matrix"
+            data-platforms={step >= 6}
+            data-dim={rules}
+            themes={themes}
+            densities={densities}
+            sizes={sizes}
+            intents={intents}
+            states={states}
+          />
         </div>
+        <p className="vx-hint t-mono" aria-hidden="true">
+          scroll sideways →
+        </p>
 
         <ol className="vx-rules fade" data-on={rules}>
           {RULES.map(([dim, list]) => (
@@ -131,6 +127,79 @@ function VariantsStage({ step }: { step: number }) {
           ))}
         </ol>
       </div>
+    </div>
+  );
+}
+
+/**
+ * The combinations as real buttons.
+ * Each density block is one CSS grid: a max-content column per state, so states
+ * align across sizes, and an 8px spacer column between intent groups, so the
+ * group gap (8 + 8 + 8 = 24px) comes from layout, not margins.
+ */
+export function VariantMatrix({
+  themes,
+  densities,
+  sizes,
+  intents,
+  states,
+  labels,
+  ...rest
+}: {
+  themes: readonly ("light" | "dark")[];
+  densities: readonly string[];
+  sizes: readonly ("sm" | "md" | "lg")[];
+  intents: readonly Intent[];
+  states: readonly BtnState[];
+  /** show state names above the columns */
+  labels?: boolean;
+} & HTMLAttributes<HTMLDivElement> & { [k: `data-${string}`]: unknown }) {
+  const n = states.length;
+  const columns = intents.map(() => `repeat(${n}, max-content)`).join(" 8px ");
+  const col = (i: number, s: number) => i * (n + 1) + s + 1;
+  return (
+    <div {...rest}>
+      {themes.map((t) => (
+        <SystemScope key={t} config={{ mode: t }} className="vx-band scope-surface" data-theme-band={t}>
+          {densities.map((d) => {
+            const grid = (
+              <div className="vx-density" data-density={d} style={{ gridTemplateColumns: columns }}>
+                {labels &&
+                  intents.map((it, i) =>
+                    states.map((st, si) => (
+                      <span key={`h-${it}-${st}`} className="vx-head t-label" style={{ gridRow: 1, gridColumn: col(i, si) }}>
+                        {st}
+                      </span>
+                    )),
+                  )}
+                {sizes.map((sz, r) =>
+                  intents.map((it, i) =>
+                    states.map((st, si) => (
+                      <span key={`${sz}-${it}-${st}`} className="vx-cell" style={{ gridRow: r + 1 + (labels ? 1 : 0), gridColumn: col(i, si) }}>
+                        <Button inert size={sz} intent={it} state={st}>
+                          Save
+                        </Button>
+                      </span>
+                    )),
+                  ),
+                )}
+              </div>
+            );
+            return labels ? (
+              <div key={d} className="vx-dgroup">
+                <span className="vx-dgroup__label t-label">
+                  {t} · {d}
+                </span>
+                {grid}
+              </div>
+            ) : (
+              <div key={d} style={{ display: "contents" }}>
+                {grid}
+              </div>
+            );
+          })}
+        </SystemScope>
+      ))}
     </div>
   );
 }

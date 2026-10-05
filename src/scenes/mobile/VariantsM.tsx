@@ -1,22 +1,28 @@
 "use client";
 
-import { SystemScope } from "@/system/SystemProvider";
-import { DIMS, RULES } from "../Variants";
+import { useState } from "react";
+import { useScrollFade } from "@/hooks/scrollFade";
+import type { Intent } from "@/ui/kit";
+import { DENSITIES, DIMS, INTENTS, RULES, SIZES, STATES, THEMES, VariantMatrix } from "../Variants";
 
-const SIZES = ["sm", "md", "lg"];
-const INTENTS = ["primary", "secondary", "ghost", "danger"];
-const STATES = ["default", "hover", "focus", "disabled", "loading"];
-
-/** Phones: each combination is a mark, not a miniature button. */
+/**
+ * Phones: one intent group at a time, at real tap size. Light and dark sit
+ * side by side in a horizontal scroller, so the grid uses the height of the
+ * screen instead of shrinking into chips.
+ */
 export function VariantsM({ step }: { step: number }) {
+  const scroller = useScrollFade<HTMLDivElement>();
+  const [intent, setIntent] = useState<Intent>("primary");
   const dims = Math.min(step, 6);
   const total = DIMS.slice(0, dims).reduce((a, d) => a * d.n, 1);
   const rules = step >= 7;
-  const sizes = dims >= 1 ? SIZES : ["md"];
-  const intents = dims >= 2 ? INTENTS : ["primary"];
-  const states = dims >= 3 ? STATES : ["default"];
-  const themes = dims >= 4 ? (["light", "dark"] as const) : (["light"] as const);
-  const densities = dims >= 5 ? ["comfortable", "compact"] : ["comfortable"];
+
+  const sizes = dims >= 1 ? SIZES : (["md"] as const);
+  const intents: Intent[] = dims >= 2 ? [intent] : ["primary"];
+  const states = dims >= 3 ? STATES : (["default"] as const);
+  const themes = dims >= 4 ? THEMES : (["light"] as const);
+  const densities = dims >= 5 ? DENSITIES : (["comfortable"] as const);
+  const shown = sizes.length * intents.length * states.length * themes.length * densities.length;
 
   return (
     <div className="m mv">
@@ -40,31 +46,41 @@ export function VariantsM({ step }: { step: number }) {
 
       <div className="m-focus is-top">
         {!rules ? (
-          <div className="mv-matrix" data-platforms={step >= 6}>
-            {themes.map((t) => (
-              <SystemScope key={t} config={{ mode: t }} className="mv-band scope-surface">
-                {densities.map((d) =>
-                  sizes.map((sz) => (
-                    <div key={`${d}${sz}`} className="mv-row" data-size={sz} data-density={d}>
-                      {intents.map((it) =>
-                        states.map((st) => <span key={`${it}${st}`} className="mv-cell" data-intent={it} data-state={st} />),
-                      )}
-                    </div>
-                  )),
-                )}
-              </SystemScope>
-            ))}
-          </div>
+          <>
+            {dims >= 2 && (
+              <div className="m-ctl mv-tabs" role="group" aria-label="Intent shown">
+                {INTENTS.map((it) => (
+                  <button key={it} type="button" className="ctl" aria-pressed={intent === it} onClick={() => setIntent(it)}>
+                    {it}
+                  </button>
+                ))}
+                <span className="mv-shown m-read t-muted">
+                  {shown}/{total}
+                </span>
+              </div>
+            )}
+            <div ref={scroller} className="vx-scroll mv-scroll" tabIndex={0} aria-label="Button combinations, scrolls sideways">
+              <VariantMatrix
+                className="vx-matrix mv-matrix"
+                data-platforms={step >= 6}
+                themes={themes}
+                densities={densities}
+                sizes={sizes}
+                intents={intents}
+                states={states}
+                labels={dims >= 3}
+              />
+            </div>
+            <p className="vx-hint m-read" aria-hidden="true">
+              {dims >= 4 ? "dark →" : "scroll →"}
+            </p>
+          </>
         ) : (
           <ol className="mv-rules">
             {RULES.map(([dim, list]) => (
               <li key={dim}>
                 <span className="m-big">{list.length}</span>
-                <span>
-                  <span className="m-label">{dim}</span>
-                  <br />
-                  <span className="m-read t-muted">{list.slice(0, 2).join(" · ")}</span>
-                </span>
+                <span className="m-label">{dim}</span>
               </li>
             ))}
           </ol>
