@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Scene, useDesktop, useStepOverride } from "@/hooks/scene";
+import { Scene, useDesktop, useStepOverride , Views } from "@/hooks/scene";
+import { NetworkM } from "./mobile/NetworkM";
 import {
   BREAKING_CHANGES,
   byId,
@@ -16,12 +17,12 @@ import {
   type NodeKind,
 } from "@/system/graph";
 
-interface Sel {
+export interface Sel {
   node: string | null;
   change: string | null;
 }
 
-const BY_STEP: Sel[] = [
+export const BY_STEP: Sel[] = [
   { node: null, change: null },
   { node: "color.action.primary", change: null },
   { node: null, change: "rename" },
@@ -29,7 +30,7 @@ const BY_STEP: Sel[] = [
   { node: null, change: null },
 ];
 
-const KIND_LABEL: Record<NodeKind, string> = {
+export const KIND_LABEL: Record<NodeKind, string> = {
   primitive: "primitives",
   mode: "modes",
   token: "tokens",
@@ -44,7 +45,7 @@ export function Network() {
       id="network"
       label={`The whole study as one dependency network: ${NODES.length} nodes and ${EDGES.length} edges from primitives through modes, tokens, components and patterns to products — including this page. Selecting a node shows what depends on it. Applying a breaking change shows the affected network and its migration cost.`}
     >
-      {({ step }) => <NetworkStage step={step} />}
+      {({ step }) => <Views desktop={<NetworkStage step={step} />} mobile={<NetworkM step={step} />} />}
     </Scene>
   );
 }

@@ -1,13 +1,14 @@
 "use client";
 
 import { useMemo, useRef } from "react";
-import { Scene, useDesktop } from "@/hooks/scene";
+import { Scene, useDesktop , Views } from "@/hooks/scene";
+import { DeprecationM } from "./mobile/DeprecationM";
 import { useWires, WireLayer, type WireSpec } from "@/hooks/wires";
 import { Button } from "@/ui/kit";
 
-type Target = "legacy" | "adapter" | "new";
+export type Target = "legacy" | "adapter" | "new";
 
-const CONSUMERS = [
+export const CONSUMERS = [
   "Checkout",
   "Billing settings",
   "Admin / Users",
@@ -19,7 +20,7 @@ const CONSUMERS = [
 ];
 
 // target per consumer, per step
-const PLAN: Target[][] = [
+export const PLAN: Target[][] = [
   ["legacy", "legacy", "legacy", "legacy", "legacy", "legacy", "legacy", "legacy"],
   ["legacy", "legacy", "legacy", "legacy", "legacy", "legacy", "legacy", "legacy"],
   ["new", "legacy", "legacy", "new", "new", "legacy", "legacy", "legacy"],
@@ -29,9 +30,9 @@ const PLAN: Target[][] = [
   ["new", "new", "new", "new", "new", "new", "new", "new"],
 ];
 
-const RELEASE = ["v3.1", "v3.2", "v3.4", "v3.6", "v4.0", "v4.3", "v5.0"];
+export const RELEASE = ["v3.1", "v3.2", "v3.4", "v3.6", "v4.0", "v4.3", "v5.0"];
 
-const NOTE: Record<number, string> = {
+export const NOTE: Record<number, string> = {
   0: "Button / Legacy: 8 consumers. It works. That is the problem.",
   1: "Deprecated in v3.2. Nothing breaks yet: a warning, a date, an adapter, a replacement.",
   2: "Three teams migrate by hand in their next sprint.",
@@ -41,7 +42,7 @@ const NOTE: Record<number, string> = {
   6: "v5.0: adapter and legacy removed. Eighteen months, seven releases.",
 };
 
-const STRAGGLER: Record<string, string> = {
+export const STRAGGLER: Record<string, string> = {
   "Internal tools": "blocked: custom theme",
   "Email preferences": "blocked: no owner",
 };
@@ -52,7 +53,7 @@ export function Deprecation() {
       id="deprecation"
       label="Button / Legacy is deprecated with eight consumers. An adapter and a replacement are introduced. Consumers migrate in batches across releases v3.2 to v4.3; two are blocked by a custom theme and by having no owning team. In v5.0 the legacy component and the adapter are removed. Systems cannot change instantly."
     >
-      {({ step }) => <DeprecationStage step={step} />}
+      {({ step }) => <Views desktop={<DeprecationStage step={step} />} mobile={<DeprecationM step={step} />} />}
     </Scene>
   );
 }

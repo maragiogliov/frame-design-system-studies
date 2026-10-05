@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import { Scene } from "@/hooks/scene";
+import { Scene, Views } from "@/hooks/scene";
+import { MutationM } from "./mobile/MutationM";
 import { SystemScope, useSystem } from "@/system/SystemProvider";
 import { BRANDS, colorRefs, merge, scalars, type SystemConfig } from "@/system/tokens";
 import { Button, Checkbox, Field, Tag, Toggle } from "@/ui/kit";
@@ -14,7 +15,7 @@ interface Version {
   outputs: { label: string; config: Partial<SystemConfig> }[];
 }
 
-const VERSIONS: Version[] = [
+export const VERSIONS: Version[] = [
   {
     v: "1.0",
     title: "One product, one team",
@@ -79,20 +80,31 @@ export function Mutation() {
       id="mutation"
       label="The whole page mutates through five versions of its own design system: v1.0 monochrome with 2px radius and 32px controls; v1.4 adds accessible focus states; v2.0 a brand redesign with no component API changes; v3.0 introduces a mobile platform where some primitives diverge; v4.0 a multi-brand architecture on one semantic layer. The page you have been reading is v4.0."
     >
-      {({ step, active }) => <MutationStage step={step} active={active} />}
+      {({ step, active }) => (
+        <>
+          <PageOverride step={step} active={active} />
+          <Views desktop={<MutationStage step={step} />} mobile={<MutationM step={step} />} />
+        </>
+      )}
     </Scene>
   );
 }
 
-function MutationStage({ step, active }: { step: number; active: boolean }) {
-  const { setSceneOverride, user, config } = useSystem();
+/** The entire page re-resolves while this scene is in range. */
+function PageOverride({ step, active }: { step: number; active: boolean }) {
+  const { setSceneOverride } = useSystem();
   const ver = VERSIONS[step];
-
-  // The entire page re-resolves while this scene is in range.
   useEffect(() => {
     setSceneOverride(active ? ver.override : null);
   }, [active, ver, setSceneOverride]);
   useEffect(() => () => setSceneOverride(null), [setSceneOverride]);
+  return null;
+}
+
+function MutationStage({ step }: { step: number }) {
+  const { user, config } = useSystem();
+  const ver = VERSIONS[step];
+
 
   const changes = useMemo(() => {
     if (step === 0) return [];

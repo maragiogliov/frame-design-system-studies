@@ -157,3 +157,29 @@ export function useMedia(query: string, initial = false) {
   return m;
 }
 export const useDesktop = () => useMedia("(min-width: 64rem)", true);
+
+/**
+ * Two compositions of the same scene state. Both are server-rendered and the
+ * media query picks one, so phones never flash the desktop layout. The mobile
+ * view is a recomposition (one statement, one focal element, one readout),
+ * not a shrunk desktop.
+ */
+export function Views({ desktop, mobile }: { desktop: ReactNode; mobile: ReactNode }) {
+  return (
+    <>
+      <div className="v-desk">{desktop}</div>
+      <div className="v-mob">{mobile}</div>
+    </>
+  );
+}
+
+/** progress through a scene's states, for phones */
+export function MSteps({ step, steps }: { step: number; steps: number }) {
+  return (
+    <div className="m-steps" aria-hidden="true">
+      {Array.from({ length: steps }, (_, i) => (
+        <span key={i} data-on={i < step} data-now={i === step} />
+      ))}
+    </div>
+  );
+}

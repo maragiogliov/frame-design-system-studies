@@ -1,22 +1,23 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Scene, useDesktop, useStepOverride } from "@/hooks/scene";
+import { Scene, useDesktop, useStepOverride, Views } from "@/hooks/scene";
+import { PropagationM } from "./mobile/PropagationM";
 import { useWires, WireLayer, type WireSpec } from "@/hooks/wires";
 import { SystemScope } from "@/system/SystemProvider";
 import { consumers, pulse } from "@/system/pulse";
 import { BRANDS, PRIMITIVES, type Brand } from "@/system/tokens";
 import { Button, Checkbox, DatePicker, Dialog, Field, Nav, Table, Toast, Toggle, Tag } from "@/ui/kit";
 
-type Tok = "color.action.primary" | "radius.control" | "space.base";
-interface Decision {
+export type Tok = "color.action.primary" | "radius.control" | "space.base";
+export interface Decision {
   brand: Brand;
   radius: number;
   space: number;
   focus: Tok;
 }
 
-const BY_STEP: Decision[] = [
+export const BY_STEP: Decision[] = [
   { brand: "a", radius: 2, space: 4, focus: "color.action.primary" },
   { brand: "a", radius: 2, space: 4, focus: "color.action.primary" },
   { brand: "b", radius: 2, space: 4, focus: "color.action.primary" },
@@ -24,7 +25,7 @@ const BY_STEP: Decision[] = [
   { brand: "b", radius: 8, space: 6, focus: "space.base" },
 ];
 
-const SWATCH: { brand: Brand; primitive: keyof typeof PRIMITIVES }[] = [
+export const SWATCH: { brand: Brand; primitive: keyof typeof PRIMITIVES }[] = [
   { brand: "a", primitive: "vermilion.600" },
   { brand: "b", primitive: "moss.600" },
   { brand: "c", primitive: "ochre.500" },
@@ -32,7 +33,7 @@ const SWATCH: { brand: Brand; primitive: keyof typeof PRIMITIVES }[] = [
 ];
 
 /** space.base is consumed through the space.* scale */
-const SELECTOR: Record<Tok, string> = {
+export const SELECTOR: Record<Tok, string> = {
   "color.action.primary": '[data-token~="color.action.primary"]',
   "radius.control": '[data-token~="radius.control"]',
   "space.base":
@@ -48,7 +49,7 @@ export function Propagation() {
       id="propagation"
       label="Seven unrelated interface fragments — navigation, form, table, dialog, date picker, button group and toast — all reference the same tokens. Changing color.action.primary, radius.control or space.base changes every consumer at once. The number of consumers is counted live."
     >
-      {({ step }) => <PropagationStage step={step} />}
+      {({ step }) => <Views desktop={<PropagationStage step={step} />} mobile={<PropagationM step={step} />} />}
     </Scene>
   );
 }

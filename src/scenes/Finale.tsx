@@ -1,11 +1,12 @@
 "use client";
 
 import { useMemo } from "react";
-import { Scene } from "@/hooks/scene";
+import { Scene , Views } from "@/hooks/scene";
+import { FinaleM } from "./mobile/FinaleM";
 import { useSystem } from "@/system/SystemProvider";
 import { COLUMNS, EDGES, NODES } from "@/system/graph";
 
-const HISTORY = [
+export const HISTORY = [
   ["v1.0", "radius.control = 2px · space.base = 4px"],
   ["v1.4", "focus.ring = 2px, offset 2px"],
   ["v2.0", "color.action.primary → vermilion"],
@@ -17,7 +18,7 @@ const HISTORY = [
 ];
 
 /** graph positions in %, from the same graph the Network scene uses */
-const POS = (() => {
+export const POS = (() => {
   const m = new Map<string, [number, number]>();
   COLUMNS.forEach((c, ci) => {
     const ns = NODES.filter((n) => n.kind === c.kind);
@@ -32,7 +33,7 @@ export function Finale() {
       id="finale"
       label="The network simplifies into a single line: a record. Systems do not remove change; they make change manageable. A design system is a record of decisions. A study by Victor Maragioglio."
     >
-      {({ step }) => <FinaleStage step={step} />}
+      {({ step }) => <Views desktop={<FinaleStage step={step} />} mobile={<FinaleM step={step} />} />}
     </Scene>
   );
 }

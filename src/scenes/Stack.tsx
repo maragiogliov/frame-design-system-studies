@@ -1,10 +1,11 @@
 "use client";
 
-import { Scene, useDesktop } from "@/hooks/scene";
+import { Scene, useDesktop, Views } from "@/hooks/scene";
+import { StackM } from "./mobile/StackM";
 import { SystemScope } from "@/system/SystemProvider";
 import { Button, Field, Icon, cx } from "@/ui/kit";
 
-const LAYERS = [
+export const LAYERS = [
   { id: "brand", name: "Brand", sub: "who we are" },
   { id: "foundations", name: "Foundations", sub: "colour · type · grid" },
   { id: "tokens", name: "Design tokens", sub: "named decisions" },
@@ -14,12 +15,12 @@ const LAYERS = [
   { id: "product", name: "Product experiences", sub: "what people use" },
 ] as const;
 
-type Layer = (typeof LAYERS)[number]["id"];
+export type Layer = (typeof LAYERS)[number]["id"];
 
-const FORCES = ["accessibility", "content", "platform", "responsiveness", "governance"] as const;
-type Force = (typeof FORCES)[number];
+export const FORCES = ["accessibility", "content", "platform", "responsiveness", "governance"] as const;
+export type Force = (typeof FORCES)[number];
 
-const EFFECT: Record<Force, Partial<Record<Layer, string>>> = {
+export const EFFECT: Record<Force, Partial<Record<Layer, string>>> = {
   accessibility: {
     brand: "brand red needs a darker text variant to reach 4.5:1",
     foundations: "contrast pairs are defined, not picked",
@@ -69,7 +70,7 @@ export function Stack() {
       id="stack"
       label="A seven-layer stack from brand to product experiences. Five forces — accessibility, content, platform, responsiveness and governance — cut across every layer and change each layer's artifact."
     >
-      {({ step }) => <StackStage step={step} />}
+      {({ step }) => <Views desktop={<StackStage step={step} />} mobile={<StackM step={step} />} />}
     </Scene>
   );
 }

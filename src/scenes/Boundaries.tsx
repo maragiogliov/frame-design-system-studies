@@ -73,7 +73,7 @@ function BoundariesBody() {
     <div className="bd">
       <div className="bd-intro">
         <p className="t-statement">
-          The system does not
+          The system does not{" "}
           <br />
           own every decision.
         </p>

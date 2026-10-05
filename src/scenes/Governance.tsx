@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Scene } from "@/hooks/scene";
+import { Scene , Views } from "@/hooks/scene";
+import { GovernanceM } from "./mobile/GovernanceM";
 import { consumers, pulse } from "@/system/pulse";
 import { Button, Field } from "@/ui/kit";
 
-const STAGES = [
+export const STAGES = [
   { id: "need", label: "local need", who: "Checkout team" },
   { id: "local", label: "local component", who: "Checkout team" },
   { id: "repeat", label: "pattern repeats", who: "3 product teams" },
@@ -17,7 +18,7 @@ const STAGES = [
   { id: "adopt", label: "adoption", who: "Products" },
 ];
 
-const LOG: string[][] = [
+export const LOG: string[][] = [
   ["“Customers need to apply a promo code without leaving the order summary.”", "A real need. Not yet a system concern."],
   ["PromoField.tsx, inside Checkout", "hard-coded #E04A1F, radius 6, no label", "Fast. Correct for one team."],
   ["Search builds Filter + Apply", "Admin builds Invite + Add", "Same shape, three implementations — now it is a pattern.", "Marketing’s countdown button: used once. Stays local."],
@@ -29,7 +30,7 @@ const LOG: string[][] = [
   ["Checkout, Search, Admin replace their copies", "3 local implementations retired", "one fix now reaches all three"],
 ];
 
-const LOCAL: { team: string; label: string; action: string; style: React.CSSProperties }[] = [
+export const LOCAL: { team: string; label: string; action: string; style: React.CSSProperties }[] = [
   { team: "Checkout", label: "Promo code", action: "Apply", style: { ["--bg" as string]: "#E04A1F", ["--r" as string]: "6px" } },
   { team: "Search", label: "Filter by tag", action: "Apply", style: { ["--bg" as string]: "#B8340F", ["--r" as string]: "0px" } },
   { team: "Admin", label: "Invite by email", action: "Add", style: { ["--bg" as string]: "#2A2926", ["--r" as string]: "3px" } },
@@ -41,7 +42,7 @@ export function Governance() {
       id="governance"
       label="Who decides? A promo-code field starts as a local need in one product team, repeats in two others, becomes a proposal, and passes through system review, accessibility validation, engineering and release before products adopt it. A one-off countdown button stays local. Each stage changes the component."
     >
-      {({ step }) => <GovernanceStage step={step} />}
+      {({ step }) => <Views desktop={<GovernanceStage step={step} />} mobile={<GovernanceM step={step} />} />}
     </Scene>
   );
 }
@@ -105,7 +106,7 @@ function GovernanceStage({ step }: { step: number }) {
   );
 }
 
-function ObjectView({ step }: { step: number }) {
+export function ObjectView({ step }: { step: number }) {
   if (step === 0) return <p className="gov-need t-essay">“Apply a promo code without leaving the summary.”</p>;
   if (step < 4)
     return (

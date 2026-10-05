@@ -1,20 +1,21 @@
 "use client";
 
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Scene, useDesktop, useStepOverride } from "@/hooks/scene";
+import { Scene, useDesktop, useStepOverride, Views } from "@/hooks/scene";
+import { DefinitionM } from "./mobile/DefinitionM";
 import { useWires, WireLayer, type WireSpec } from "@/hooks/wires";
 import { cx } from "@/ui/kit";
 
-const COLS: { id: string; label: string; terms: string[] }[] = [
+export const COLS: { id: string; label: string; terms: string[] }[] = [
   { id: "decide", label: "Decide", terms: ["rules", "ownership", "governance", "platform decisions"] },
   { id: "encode", label: "Encode", terms: ["tokens", "accessibility", "content conventions", "responsive logic"] },
   { id: "build", label: "Build", terms: ["primitives", "components", "states", "behaviors", "patterns"] },
   { id: "sustain", label: "Sustain", terms: ["documentation", "testing", "versioning", "contribution", "migration"] },
 ];
 
-const LIBRARY = ["primitives", "components", "states", "behaviors"];
+export const LIBRARY = ["primitives", "components", "states", "behaviors"];
 
-const DEF: Record<string, string> = {
+export const DEF: Record<string, string> = {
   rules: "Constraints stated once: how things space, align, respond, speak.",
   ownership: "Someone answers for each decision. Unowned parts rot first.",
   governance: "How decisions are proposed, challenged, accepted, retired.",
@@ -35,7 +36,7 @@ const DEF: Record<string, string> = {
   migration: "Moving consumers from old decisions to new ones. Never instant.",
 };
 
-const EDGES: [string, string][] = [
+export const EDGES: [string, string][] = [
   ["rules", "tokens"],
   ["rules", "content conventions"],
   ["rules", "behaviors"],
@@ -71,7 +72,7 @@ export function Definition() {
       id="definition"
       label="The definition 'a design system is a collection of components' is struck out and replaced by a map of eighteen connected concerns across deciding, encoding, building and sustaining. Components are one node. The component library covers primitives, components, states and behaviours; the design system is everything."
     >
-      {({ step }) => <DefinitionStage step={step} />}
+      {({ step }) => <Views desktop={<DefinitionStage step={step} />} mobile={<DefinitionM step={step} />} />}
     </Scene>
   );
 }

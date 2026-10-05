@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useRef, type CSSProperties } from "react";
-import { Scene, useDesktop } from "@/hooks/scene";
+import { Scene, useDesktop , Views } from "@/hooks/scene";
+import { EntropyM } from "./mobile/EntropyM";
 import { useWires, WireLayer, type WireSpec } from "@/hooks/wires";
 
 /* ------------------------------------------------------------------ data */
@@ -32,7 +33,7 @@ interface Instance {
   governed: "variant-lg" | "variant-secondary" | "exception" | "default";
 }
 
-const SOURCE: Props = { bg: "#C8370F", radius: 2, padX: 16, h: 36, shadow: "none", focus: "ring", icon: 16 };
+export const SOURCE: Props = { bg: "#C8370F", radius: 2, padX: 16, h: 36, shadow: "none", focus: "ring", icon: 16 };
 
 const SH = {
   sm: "0 1px 2px rgba(0,0,0,.25)",
@@ -42,10 +43,10 @@ const SH = {
   hard: "2px 2px 0 #1D1C1A",
 };
 
-const TEAMS = ["Checkout", "Search", "Onboarding", "Admin", "Mobile", "Marketing"];
-const TICKS = ["shared", "forked", "month 3", "month 6", "month 9", "month 12", "month 18", "audit", "governance", "v2.0"];
+export const TEAMS = ["Checkout", "Search", "Onboarding", "Admin", "Mobile", "Marketing"];
+export const TICKS = ["shared", "forked", "month 3", "month 6", "month 9", "month 12", "month 18", "audit", "governance", "v2.0"];
 
-const INSTANCES: Instance[] = [
+export const INSTANCES: Instance[] = [
   { id: "c1", team: 0, label: "Continue", born: 1, governed: "default", changes: [
     { at: 2, set: { bg: "#D2421A" }, note: "red “closer to the brand deck”" },
     { at: 3, set: { padX: 20 }, note: "padding +4" },
@@ -114,7 +115,7 @@ const INSTANCES: Instance[] = [
   ] },
 ];
 
-function propsAt(inst: Instance, step: number): Props {
+export function propsAt(inst: Instance, step: number): Props {
   const p = { ...SOURCE, ...inst.init };
   for (const c of inst.changes) if (c.at <= step) Object.assign(p, c.set);
   return p;
@@ -122,7 +123,7 @@ function propsAt(inst: Instance, step: number): Props {
 
 const FINAL = INSTANCES.map((i) => propsAt(i, 6));
 const uniq = <T,>(xs: T[]) => Array.from(new Set(xs));
-const AUDIT = {
+export const AUDIT = {
   buttons: INSTANCES.length,
   colors: uniq(FINAL.map((p) => p.bg)),
   radii: uniq(FINAL.map((p) => p.radius)).sort((a, b) => a - b),
@@ -145,7 +146,7 @@ export function Entropy() {
       id="entropy"
       label={`One shared button is forked by six product teams. Over eighteen months each team makes small local changes. An audit finds ${AUDIT.buttons} buttons, ${AUDIT.colors.length} action colours, ${AUDIT.radii.length} radii, ${AUDIT.shadows.length} shadows and ${AUDIT.focus.length} focus behaviours. Without governance, systems drift. Shared tokens then consolidate them into one component with sanctioned variants and one documented exception.`}
     >
-      {({ step }) => <EntropyStage step={step} />}
+      {({ step }) => <Views desktop={<EntropyStage step={step} />} mobile={<EntropyM step={step} />} />}
     </Scene>
   );
 }
@@ -316,7 +317,7 @@ function Row({ n, label, children }: { n: number; label: string; children?: Reac
   );
 }
 
-function styleOf(p: Props): CSSProperties {
+export function styleOf(p: Props): CSSProperties {
   return {
     background: p.bg,
     borderRadius: p.radius,
@@ -326,7 +327,7 @@ function styleOf(p: Props): CSSProperties {
   };
 }
 
-function tokenStyle(g: Instance["governed"]): CSSProperties {
+export function tokenStyle(g: Instance["governed"]): CSSProperties {
   const lg = g === "variant-lg";
   const sec = g === "variant-secondary";
   return {

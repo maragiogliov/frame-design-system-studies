@@ -1,12 +1,13 @@
 "use client";
 
 import { useMemo, useRef } from "react";
-import { Scene, useDesktop, useStepOverride } from "@/hooks/scene";
+import { Scene, useDesktop, useStepOverride, Views } from "@/hooks/scene";
+import { TokensM } from "./mobile/TokensM";
 import { useWires, WireLayer, type WireSpec } from "@/hooks/wires";
 import { useSystem } from "@/system/SystemProvider";
 import { colorRefs, contrast, PRIMITIVES, type ColorSemantic, type Mode, type PrimitiveName } from "@/system/tokens";
 
-const COMPONENT: [string, ColorSemantic][] = [
+export const COMPONENT: [string, ColorSemantic][] = [
   ["page.background", "color.surface.default"],
   ["page.text", "color.text.primary"],
   ["input.background", "color.surface.raised"],
@@ -17,7 +18,7 @@ const COMPONENT: [string, ColorSemantic][] = [
 const SEMANTIC = Array.from(new Set(COMPONENT.map(([, s]) => s)));
 
 /** A two-layer system: components point straight at primitives. Dark mode was patched by hand. */
-const TWO_LAYER: Record<Mode, Record<string, PrimitiveName>> = {
+export const TWO_LAYER: Record<Mode, Record<string, PrimitiveName>> = {
   light: {
     "page.background": "paper.50",
     "page.text": "ink.900",
@@ -44,7 +45,7 @@ export function Tokens() {
       id="tokens"
       label="Primitive tokens hold raw values. Semantic tokens hold meaning and point at primitives. Component tokens point at semantic tokens. Switching to dark mode re-routes only the semantic-to-primitive links; component links do not change. Without the semantic layer, dark mode must be patched component by component, and text becomes unreadable."
     >
-      {({ step }) => <TokensStage step={step} />}
+      {({ step }) => <Views desktop={<TokensStage step={step} />} mobile={<TokensM step={step} />} />}
     </Scene>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
-import { Scene, useDesktop } from "@/hooks/scene";
+import { Scene, useDesktop , Views } from "@/hooks/scene";
+import { VariantsM } from "./mobile/VariantsM";
 import { SystemScope } from "@/system/SystemProvider";
 import { Button, type BtnState, type Intent } from "@/ui/kit";
 
@@ -10,7 +11,7 @@ const STATES: BtnState[] = ["default", "hover", "focus", "disabled", "loading"];
 const THEMES = ["light", "dark"] as const;
 const DENSITIES = ["comfortable", "compact"] as const;
 
-const DIMS = [
+export const DIMS = [
   { name: "size", n: 3, values: "sm · md · lg" },
   { name: "intent", n: 4, values: "primary · secondary · ghost · danger" },
   { name: "state", n: 5, values: "default · hover · focus · disabled · loading" },
@@ -19,7 +20,7 @@ const DIMS = [
   { name: "platform", n: 3, values: "web · iOS · Android" },
 ];
 
-const RULES: [string, string[]][] = [
+export const RULES: [string, string[]][] = [
   ["size", ["sm → height − 8, inset × .75", "md → size.control.height", "lg → height + 8, inset × 1.25"]],
   ["intent", ["primary → color.action.*", "secondary → border.strong", "ghost → action.text, no fill", "danger → feedback.error"]],
   ["state", ["hover → *.hover", "focus → focus.ring", "disabled → surface.sunken", "loading → aria-busy, width held", "default"]],
@@ -34,7 +35,7 @@ export function Variants() {
       id="variants"
       label="One button multiplied by 3 sizes, 4 intents, 5 states, 2 themes and 2 densities becomes 240 combinations; across 3 platforms, 720. Nobody designs 720 buttons. They design 19 rules that produce them."
     >
-      {({ step }) => <VariantsStage step={step} />}
+      {({ step }) => <Views desktop={<VariantsStage step={step} />} mobile={<VariantsM step={step} />} />}
     </Scene>
   );
 }

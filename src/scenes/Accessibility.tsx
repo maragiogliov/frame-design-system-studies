@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
-import { Scene } from "@/hooks/scene";
+import { Scene , Views } from "@/hooks/scene";
+import { AccessibilityM } from "./mobile/AccessibilityM";
 import { SystemScope, useSystem } from "@/system/SystemProvider";
 import { contrast, merge, resolveChain, resolveValue, scalars, type SystemConfig } from "@/system/tokens";
 import { Button, Checkbox, Dialog, Field, Toggle } from "@/ui/kit";
 
-const PREVIEW: { label: string; patch: Partial<SystemConfig> }[] = [
+export const PREVIEW: { label: string; patch: Partial<SystemConfig> }[] = [
   { label: "standard", patch: {} },
   { label: "high contrast", patch: { contrast: "high" } },
   { label: "reduced motion", patch: { motion: "reduced" } },
@@ -19,7 +20,7 @@ export function Accessibility() {
       id="accessibility"
       label="Accessibility is not a checklist at the end. High contrast resolves semantic colour tokens from a different map; reduced motion sets every motion duration to zero; larger targets raise the minimum target size. The switches apply to the whole study."
     >
-      {({ step }) => <A11yStage step={step} />}
+      {({ step }) => <Views desktop={<A11yStage step={step} />} mobile={<AccessibilityM step={step} />} />}
     </Scene>
   );
 }

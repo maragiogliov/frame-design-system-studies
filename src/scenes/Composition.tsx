@@ -1,7 +1,8 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState } from "react";
-import { Scene, useDesktop } from "@/hooks/scene";
+import { Scene, useDesktop, Views } from "@/hooks/scene";
+import { CompositionM } from "./mobile/CompositionM";
 import { Button, Field, Icon, Nav, Table, TOK } from "@/ui/kit";
 
 const LEVELS = [
@@ -18,7 +19,7 @@ export function Composition() {
       id="composition"
       label="Five primitives compose into a button. The button is reused inside a toolbar, the toolbar inside an application header, and the header inside a product interface. Hovering any button highlights every instance."
     >
-      {({ step }) => <CompositionStage step={step} />}
+      {({ step }) => <Views desktop={<CompositionStage step={step} />} mobile={<CompositionM step={step} />} />}
     </Scene>
   );
 }
@@ -132,7 +133,7 @@ function CompositionStage({ step }: { step: number }) {
 }
 
 /** The button, with its primitives pulled apart when `exploded`. */
-function Exploded({ exploded }: { exploded: boolean }) {
+export function Exploded({ exploded }: { exploded: boolean }) {
   return (
     <span className="xbtn" data-exploded={exploded} data-comp="button" data-token={TOK.buttonPrimary} aria-hidden="true">
       <span className="xbtn__layer xbtn__surface" data-name="surface · color.action.primary" />

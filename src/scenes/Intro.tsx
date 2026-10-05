@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import { Scene, useDesktop } from "@/hooks/scene";
+import { Scene, useDesktop, Views } from "@/hooks/scene";
+import { IntroM } from "./mobile/IntroM";
 import { useWires, WireLayer, type WireSpec } from "@/hooks/wires";
 import { SystemScope } from "@/system/SystemProvider";
 import { consumers, pulse } from "@/system/pulse";
@@ -73,7 +74,12 @@ export function Intro() {
       id="intro"
       label="Nine interface elements that appear independent are connected by three shared tokens: an action colour, a control radius and a spacing step. When the radius changes, every connected element changes."
     >
-      {({ step }) => <IntroStage step={step} />}
+      {({ step }) => (
+        <>
+          <h1 className="sr-only">Design systems — a study by Victor Maragioglio</h1>
+          <Views desktop={<IntroStage step={step} />} mobile={<IntroM step={step} />} />
+        </>
+      )}
     </Scene>
   );
 }
@@ -112,7 +118,6 @@ function IntroStage({ step }: { step: number }) {
 
   return (
     <div className="intro">
-      <h1 className="sr-only">Design systems — a study by Victor Maragioglio</h1>
       <SystemScope config={{ radius }} className="intro-field">
         <div ref={field} className="intro-field__inner">
           <WireLayer paths={paths} />

@@ -1,21 +1,22 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Scene, useStepOverride } from "@/hooks/scene";
+import { Scene, useStepOverride , Views } from "@/hooks/scene";
+import { ThemesM } from "./mobile/ThemesM";
 import { SystemScope } from "@/system/SystemProvider";
 import { gsap } from "@/system/gsap";
 import { dur } from "@/system/motion";
 import { BRANDS, type Brand, type Density, type Mode, type Platform } from "@/system/tokens";
 import { Button, Field, Icon, Toggle } from "@/ui/kit";
 
-interface Cfg {
+export interface Cfg {
   brand: Brand;
   mode: Mode;
   density: Density;
   platform: Platform;
 }
 
-const PATH: Cfg[] = [
+export const PATH: Cfg[] = [
   { brand: "a", mode: "light", density: "comfortable", platform: "web" },
   { brand: "a", mode: "dark", density: "comfortable", platform: "web" },
   { brand: "a", mode: "dark", density: "compact", platform: "web" },
@@ -26,7 +27,7 @@ const PATH: Cfg[] = [
   { brand: "c", mode: "dark", density: "comfortable", platform: "ios" },
 ];
 
-const AXES: { key: keyof Cfg; label: string; options: string[]; show: (v: string) => string }[] = [
+export const AXES: { key: keyof Cfg; label: string; options: string[]; show: (v: string) => string }[] = [
   { key: "brand", label: "brand", options: ["a", "b", "c"], show: (v) => `brand ${v.toUpperCase()}` },
   { key: "mode", label: "mode", options: ["light", "dark"], show: (v) => v },
   { key: "density", label: "density", options: ["comfortable", "compact"], show: (v) => v },
@@ -45,7 +46,7 @@ export function Themes() {
       id="themes"
       label="A single interface resolves across four axes — brand, mode, density and platform — 36 configurations in all. Each step changes one axis and the whole interface resolves again."
     >
-      {({ step }) => <ThemesStage step={step} />}
+      {({ step }) => <Views desktop={<ThemesStage step={step} />} mobile={<ThemesM step={step} />} />}
     </Scene>
   );
 }
@@ -135,7 +136,7 @@ function ThemesStage({ step }: { step: number }) {
   );
 }
 
-function App({ platform }: { platform: Platform }) {
+export function App({ platform }: { platform: Platform }) {
   return (
     <div className="th-app" data-platform={platform}>
       <div className="th-bar">

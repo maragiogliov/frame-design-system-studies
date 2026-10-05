@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
-import { Scene, useDesktop } from "@/hooks/scene";
+import { Scene, useDesktop , Views } from "@/hooks/scene";
+import { StatesM } from "./mobile/StatesM";
 import { useWires, WireLayer, type WireSpec } from "@/hooks/wires";
 import { SystemScope } from "@/system/SystemProvider";
 import { Button, type BtnState } from "@/ui/kit";
@@ -14,7 +15,7 @@ interface StateDef {
   delta: [string, string][];
 }
 
-const CORE: StateDef[] = [
+export const CORE: StateDef[] = [
   { id: "default", event: "rest", pos: [4, 44], delta: [["background", "color.action.primary"], ["text", "color.text.onAction"], ["cursor", "pointer"]] },
   { id: "hover", from: "default", event: "pointerenter", pos: [30, 8], delta: [["background", "color.action.primaryHover"]] },
   { id: "focus", from: "default", event: "Tab", pos: [30, 80], delta: [["outline", "color.focus.ring · focus.ring.width"], ["offset", "focus.ring.offset"]] },
@@ -38,7 +39,7 @@ const EDGES: [string, string][] = [
   ["loading", "error"],
 ];
 
-const EDGE_CONDITIONS: { id: string; rule: string; delta: [string, string][] }[] = [
+export const EDGE_CONDITIONS: { id: string; rule: string; delta: [string, string][] }[] = [
   { id: "long content", rule: "wrap to two lines, then truncate with a tooltip", delta: [["max-width", "20rem"], ["lines", "≤ 2"]] },
   { id: "RTL", rule: "layout mirrors; directional icons flip", delta: [["padding", "padding-inline (logical)"], ["icon", "scaleX(-1)"]] },
   { id: "high contrast", rule: "semantic tokens resolve from the high-contrast map", delta: [["background", "color.action.primary → vermilion.700"], ["focus.ring.width", "2px → 3px"]] },
@@ -60,7 +61,7 @@ export function States() {
       id="states"
       label="One button moves through nine states — default, hover, focus, active, pressed, selected, disabled, loading and error — and six conditions that multiply them: long content, right-to-left, high contrast, reduced motion, touch input and keyboard focus. A component is not a picture; it is a state machine. At the end the button is live."
     >
-      {({ step }) => <StatesStage step={step} />}
+      {({ step }) => <Views desktop={<StatesStage step={step} />} mobile={<StatesM step={step} />} />}
     </Scene>
   );
 }
@@ -154,7 +155,7 @@ function StatesStage({ step }: { step: number }) {
   );
 }
 
-function Specimen({ step }: { step: number }) {
+export function Specimen({ step }: { step: number }) {
   const [liveState, setLiveState] = useState<BtnState | undefined>();
   const attempts = useRef(0);
   useEffect(() => setLiveState(undefined), [step]);

@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Scene, useStepOverride } from "@/hooks/scene";
+import { Scene, useStepOverride, Views } from "@/hooks/scene";
+import { SpacingM } from "./mobile/SpacingM";
 import { SystemScope } from "@/system/SystemProvider";
 import { SPACE_STEPS } from "@/system/tokens";
 import { Button, Field, Toggle } from "@/ui/kit";
 
-const BY_STEP = [4, 4, 8, 2];
+export const BY_STEP = [4, 4, 8, 2];
 
 export function Spacing() {
   return (
@@ -14,13 +15,13 @@ export function Spacing() {
       id="spacing"
       label="A settings layout built only from spacing tokens. Changing the base rhythm from 4 to 8 pixels expands every gap and inset; at 2 pixels the layout collapses, but minimum target size still holds at 24 pixels."
     >
-      {({ step }) => <SpacingStage step={step} />}
+      {({ step }) => <Views desktop={<SpacingStage step={step} />} mobile={<SpacingM step={step} />} />}
     </Scene>
   );
 }
 
 /** a gap that is a real element sized by a token */
-function Gap({ t, show, axis = "v" }: { t: string; show: boolean; axis?: "v" | "h" }) {
+export function Gap({ t, show, axis = "v" }: { t: string; show: boolean; axis?: "v" | "h" }) {
   return (
     <span className="gap" data-axis={axis} data-show={show} style={axis === "v" ? { height: `var(--space-${t})` } : { width: `var(--space-${t})` }} aria-hidden="true">
       {axis === "v" && <span className="gap__label t-mono">space.{t}</span>}

@@ -4,6 +4,7 @@ import { Archivo, Newsreader, JetBrains_Mono } from "next/font/google";
 import { BASE_CONFIG, primitiveVars, toCSSVars } from "@/system/tokens";
 import "./globals.css";
 import "./scenes.css";
+import "./mobile.css";
 
 const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
 const newsreader = Newsreader({ subsets: ["latin"], style: ["normal", "italic"], variable: "--font-newsreader", display: "swap" });
